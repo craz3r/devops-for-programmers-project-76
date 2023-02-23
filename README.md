@@ -8,3 +8,7 @@
 #### Deploy and run application
 
 `make deploy-application`
+
+#### Application is available on following address
+
+[Redmine application](http://www.nsigov.site/)
