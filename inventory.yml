@@ -8,3 +8,4 @@ all:
           ansible_host: 51.250.100.58
         web2:
           ansible_host: 158.160.22.210
+          
