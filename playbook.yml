@@ -1,10 +1,64 @@
 - hosts: all
+  become: yes
 
-- name: Install required packages
-  ansible.builtin.import_playbook: setup.yml
+  pre_tasks:
+  - name: Update apt
+    ansible.builtin.apt:
+      update_cache: yes
 
-- name: Deploy application
-  ansible.builtin.import_playbook: deploy.yml
+  roles:
+    - role: geerlingguy.pip
+    - name: datadog.datadog
+      when: '"webservers" in group_names'
 
-- name: Run datadog
-  ansible.builtin.import_playbook: datadog.yml
+  tasks:
+    - name: Install system packages
+      apt:
+        pkg:
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: latest
+        update_cache: true
+    
+    - name: Add Docker GPG apt key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        pkg:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+
+    - name: Ensures /var/tmp/redmine exists
+      file:
+        path: "/var/tmp/redmine"
+        state: directory
+
+    - name: Copy env file
+      ansible.builtin.template:
+        src: .env.example
+        dest: "/var/tmp/redmine/.env"
+    
+    - name: Start redmine application
+      community.docker.docker_container:
+        name: redmine
+        image: redmine
+        ports:
+          - "80:3000"
+        env_file: /var/tmp/redmine/.env
