@@ -11,6 +11,7 @@
       tags: setup
     - role: datadog.datadog
       tags: deploy
+      hosts: webservers
 
   tasks:
     - name: Install system packages
