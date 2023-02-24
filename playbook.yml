@@ -9,9 +9,6 @@
   roles:
     - role: geerlingguy.pip
       tags: setup
-    - role: datadog.datadog
-      tags: deploy
-      hosts: webservers
 
   tasks:
     - name: Install system packages
@@ -71,4 +68,10 @@
         ports:
           - "80:3000"
         env_file: /var/tmp/redmine/.env
+      tags: deploy
+
+- hosts: webservers
+  become: yes
+  roles:
+    - role: datadog.datadog
       tags: deploy
