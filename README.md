@@ -3,9 +3,8 @@
 
 ### System requirements:
 
-OS: Windows (WSL), Linux, MacOS
-
-Ansible
+- OS: Windows (WSL), Linux, MacOS
+- Ansible
 
 #### Setup dependencies
 
