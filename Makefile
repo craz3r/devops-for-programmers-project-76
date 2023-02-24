@@ -1,13 +1,10 @@
-setup: install-galaxy setup-dependencies
+run: install-galaxy deploy-application
 
 install-galaxy:
 	ansible-galaxy install -r requirements.yml
 
-setup-dependencies:
-	ansible-playbook --ask-vault-pass playbook.yml -t "setup" -i inventory.yml
-
 deploy-application:
-	ansible-playbook -i inventory.yml --ask-vault-pass playbook.yml -t "deploy"
+	ansible-playbook -i inventory.yml --ask-vault-pass playbook.yml
 
 encrypt-vault:
 	ansible-vault encrypt group_vars/webservers/vault.yml
