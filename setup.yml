@@ -1,14 +1,12 @@
-- hosts: all
+- hosts: webservers
   become: yes
-  vars:
-    pip_install_packages:
-      - docker
   pre_tasks:
     - name: Update apt
       ansible.builtin.apt:
         update_cache: yes
   roles:
     - role: geerlingguy.pip
+    - role: datadog.datadog
   tasks:
     - name: Install system packages
       apt:
