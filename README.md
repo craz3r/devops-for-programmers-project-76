@@ -10,6 +10,10 @@
 
 `make setup`
 
+Before start yout application you should create a file .vault_pass with your ansible vault password, make sure that is not executable
+
+`echo 'your_vault_password' > .vault_pass`
+
 #### Deploy and run application
 
 `make deploy-application`
