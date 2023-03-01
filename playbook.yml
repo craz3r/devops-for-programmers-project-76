@@ -1,6 +1,8 @@
 - hosts: all
   become: true
 
+  name: Install system dependencies
+
   pre_tasks:
   - name: Update apt
     ansible.builtin.apt:
@@ -11,7 +13,7 @@
 
   tasks:
     - name: Install system packages
-      apt:
+      ansible.builtin.apt:
         pkg:
           - ca-certificates
           - curl
@@ -20,12 +22,12 @@
         update_cache: true
 
     - name: Add Docker GPG apt key
-      apt_key:
+      ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
     - name: Add Docker Repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
 
@@ -34,7 +36,7 @@
         update_cache: true
 
     - name: Install Docker
-      apt:
+      ansible.builtin.apt:
         pkg:
           - docker-ce
           - docker-ce-cli
@@ -42,15 +44,19 @@
           - docker-buildx-plugin
           - docker-compose-plugin
 
+- hosts: all
+  become: true
+  name: Run redmine application
+  tasks:
     - name: Ensures /var/tmp/redmine exists
-      file:
+      ansible.builtin.file:
         path: "/var/tmp/redmine"
         state: directory
         mode: '775'
 
     - name: Copy env file
       ansible.builtin.template:
-        src: .env.example
+        src: "templates/.env.j2"
         dest: "/var/tmp/redmine/.env"
         mode: '775'
 
@@ -62,7 +68,8 @@
           - "80:3000"
         env_file: /var/tmp/redmine/.env
 
-    - name: Run datadog agent
-      import_role:
-        name: datadog.datadog
-      when: '"webservers" in group_names'
+- hosts: webservers
+  become: true
+  name: Run datadog agent
+  roles:
+    - role: datadog.datadog

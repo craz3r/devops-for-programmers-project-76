@@ -4,7 +4,7 @@ install-galaxy:
 	ansible-galaxy install -r requirements.yml
 
 deploy-application:
-	ansible-playbook -i inventory.yml --ask-vault-pass playbook.yml
+	ansible-playbook --vault-password-file .vault_pass -i inventory.yml playbook.yml
 
 encrypt-vault:
 	ansible-vault encrypt group_vars/webservers/vault.yml
